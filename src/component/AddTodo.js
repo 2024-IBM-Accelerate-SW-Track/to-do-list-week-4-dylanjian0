@@ -1,3 +1,4 @@
+import Axios from "axios";
 import React, { Component } from "react";
 import { Button, TextField } from "@mui/material";
 import { DesktopDatePicker , LocalizationProvider} from '@mui/x-date-pickers';
@@ -36,7 +37,23 @@ class AddTodo extends Component {
   // event.preventDefault() is called to prevents default event behavior like refreshing the browser.
   // this.props.addTodo(this.state) passes the current state (or user input and current date/time) into the addTodo function defined
   // in the Home.js file which then adds the input into the list.
-  handleSubmit = (event) => {
+  handleSubmit = (event) => { 
+    const jsonObject = {
+      id: this.state.id,
+      task: this.state.content,
+      currentDate: new Date().toISOString(), 
+      dueDate: this.state.duedate ? this.state.duedate.toISOString() : null 
+    };
+    Axios({
+      method: "POST",
+      url: "http://localhost:<port>/add/item",
+      data: {jsonObject},
+      headers: {
+         "Content-Type": "application/json"
+      }
+   }).then(res => {
+      console.log(res.data.message);
+   });
     event.preventDefault();
     if (this.state.content.trim()) {
       this.props.addTodo(this.state);
